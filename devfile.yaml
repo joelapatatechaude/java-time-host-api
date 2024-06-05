@@ -1,6 +1,6 @@
 schemaVersion: 2.2.2
 metadata:
-  name: java-springboot
+  name: java-time-host-api
   displayName: Spring Boot®
   description: Java application using Spring Boot® and OpenJDK 11
   icon: https://raw.githubusercontent.com/devfile-samples/devfile-stack-icons/main/spring.svg
@@ -68,6 +68,16 @@ commands:
   - id: podman-build
     exec:
       commandLine: /bin/sh -c "podman-wrapper.sh build . -t quay.io/rh_ee_cschmitz/java-time-host-api"
+      component: java
+      workingDir: ${PROJECT_SOURCE}
+  - id: podman-push
+    exec:
+      commandLine: /bin/sh -c "podman-wrapper.sh push quay.io/rh_ee_cschmitz/java-time-host-api"
+      component: java
+      workingDir: ${PROJECT_SOURCE}
+  - id: podman-login
+    exec:
+      commandLine: /bin/sh -c "podman-wrapper.sh login quay.io"
       component: java
       workingDir: ${PROJECT_SOURCE}
   - id: build
