@@ -45,7 +45,7 @@ components:
         - name: POSTGRESQL_DATABASE
           value: rhsi
       endpoints:
-        - name: postgres
+        - name: postgresql
           exposure: internal
           targetPort: 5432
       memoryLimit: '512Mi'
