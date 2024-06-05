@@ -1,5 +1,5 @@
 # Start with a base image containing Java runtime
-FROM openjdk:17-jdk-slim
+FROM docker.io/library/openjdk:17-jdk-slim
 
 # Add a volume pointing to /tmp
 VOLUME /tmp
