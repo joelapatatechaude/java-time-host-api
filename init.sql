@@ -1,0 +1,5 @@
+CREATE TABLE time (
+    id SERIAL PRIMARY KEY,
+    date_time TIMESTAMPTZ NOT NULL,
+    hostname VARCHAR(255) NOT NULL
+);
