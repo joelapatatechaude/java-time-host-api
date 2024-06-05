@@ -19,7 +19,7 @@ public class TimeController {
         this.timeRepository = timeRepository;
     }
 
-    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    //    @CrossOrigin(origins = "*", allowedHeaders = "*")
     @GetMapping("/time")
     public TimeEntry getTime() throws UnknownHostException {
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Australia/Sydney"));
@@ -29,7 +29,7 @@ public class TimeController {
         return timeEntry;
     }
 
-    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    //    @CrossOrigin(origins = "*", allowedHeaders = "*")
     @GetMapping("/history")
     public List<TimeEntry> getHistory() {
         return timeRepository.findTop100ByOrderByIdDesc();
