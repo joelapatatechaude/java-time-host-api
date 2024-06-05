@@ -1,6 +1,6 @@
 package com.example.demo;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,9 +13,13 @@ import java.util.List;
 @RestController
 public class TimeController {
 
-    @Autowired
-    private TimeRepository timeRepository;
+    private final TimeRepository timeRepository;
 
+    public TimeController(TimeRepository timeRepository) {
+        this.timeRepository = timeRepository;
+    }
+
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     @GetMapping("/time")
     public TimeEntry getTime() throws UnknownHostException {
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Australia/Sydney"));
@@ -25,6 +29,7 @@ public class TimeController {
         return timeEntry;
     }
 
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     @GetMapping("/history")
     public List<TimeEntry> getHistory() {
         return timeRepository.findTop100ByOrderByIdDesc();
