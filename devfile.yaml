@@ -1,0 +1,95 @@
+schemaVersion: 2.2.2
+metadata:
+  name: java-springboot
+  displayName: Spring Boot®
+  description: Java application using Spring Boot® and OpenJDK 11
+  icon: https://raw.githubusercontent.com/devfile-samples/devfile-stack-icons/main/spring.svg
+  tags:
+    - Java
+    - Spring
+  projectType: springboot
+  language: Java
+  version: 1.4.0
+  globalMemoryLimit: 2674Mi
+components:
+  - name: init-scripts
+    volume:
+      size: 1Gi
+      ephemeral: true
+  - name: java
+    container:
+      image: registry.redhat.io/devspaces/udi-rhel8
+      command: ["tail", "-f", "/dev/null"]
+      memoryLimit: 768Mi
+      mountSources: true
+      endpoints:
+        - name: https-springbt
+          targetPort: 8080
+          protocol: https
+        - exposure: none
+          name: debug
+          targetPort: 5858
+      volumeMounts:
+        - name: m2
+          path: /home/user/.m2
+      env:
+        - name: DEBUG_PORT
+          value: "5858"
+  - name: m2
+    volume:
+      size: 3Gi
+  - name: psql
+    container:
+      image: registry.redhat.io/rhel9/postgresql-16:latest
+      env:
+        - name: POSTGRESQL_USER
+          value: redhat
+        - name: POSTGRESQL_PASSWORD
+          value: IloveOpenShift4
+        - name: POSTGRESQL_DATABASE
+          value: rhsi
+      endpoints:
+        - name: postgres
+          exposure: internal
+          targetPort: 5432
+      memoryLimit: '512Mi'
+      memoryRequest: '256Mi'
+      cpuLimit: '1'
+      cpuRequest: '0.25'
+      mountSources: false
+      volumeMounts:
+        - name: psql-storage
+          path: /var/lib/pgsql/data
+  - name: psql-storage
+    volume:
+      size: 1G
+commands:
+  - id: copy-init-script
+    exec:
+      commandLine: cp /projects/init.sql /docker-entrypoint-initdb.d/
+      component: psql
+      workingDir: /
+  - id: build
+    exec:
+      component: java
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: "mvn clean -Dmaven.repo.local=/home/user/.m2/repository package -Dmaven.test.skip=true"
+      group:
+        kind: build
+        isDefault: true
+  - id: run
+    exec:
+      component: java
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: "mvn -Dmaven.repo.local=/home/user/.m2/repository spring-boot:run"
+      group:
+        kind: run
+        isDefault: true
+  - id: debug
+    exec:
+      component: java
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: "java -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=${DEBUG_PORT},suspend=n -jar target/*.jar"
+      group:
+        kind: debug
+        isDefault: true
